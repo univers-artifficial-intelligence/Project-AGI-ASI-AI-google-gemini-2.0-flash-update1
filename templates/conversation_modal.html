@@ -1,0 +1,124 @@
+<div id="history-modal" class="modal">
+    <div class="modal-content conversation-modal">
+        <div class="modal-header">
+            <h3><i class="fas fa-history"></i> Historique des conversations</h3>
+            <span class="close-modal">&times;</span>
+        </div>
+        <div class="modal-body">
+            <div class="search-bar">
+                <div class="input-group">
+                    <input type="text" id="search-conversations" class="form-control" placeholder="Rechercher dans les conversations...">
+                    <button class="btn secondary" onclick="searchConversations()">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </div>
+            <div id="history-conversations-list">
+                <div class="text-center py-3">
+                    <i class="fas fa-spinner fa-spin"></i> Chargement...
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function loadConversationsList() {
+    fetch('/api/conversations')
+        .then(response => response.json())
+        .then(data => {
+            const container = document.getElementById('history-conversations-list');
+            if (data.conversations && data.conversations.length > 0) {
+                container.innerHTML = data.conversations.map(conv => `
+                    <div class="conversation-item" onclick="loadConversation('${conv.session_id}')">
+                        <div class="conversation-header">
+                            <h4>${conv.title || 'Conversation sans titre'}</h4>
+                            <div class="conversation-actions">
+                                <button class="action-btn edit-btn" onclick="event.stopPropagation(); editConversation('${conv.session_id}')" title="Modifier">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="action-btn delete-btn" onclick="event.stopPropagation(); deleteConversation('${conv.session_id}')" title="Supprimer">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="conversation-details">
+                            <span><i class="fas fa-calendar"></i> ${new Date(conv.created_at).toLocaleDateString('fr-FR')}</span>
+                            <span><i class="fas fa-comments"></i> ${conv.message_count} messages</span>
+                        </div>
+                        ${conv.preview ? `<div class="conversation-preview">${conv.preview}</div>` : ''}
+                    </div>
+                `).join('');
+            } else {
+                container.innerHTML = '<div class="text-center py-5 text-muted">Aucune conversation trouvée</div>';
+            }
+        })
+        .catch(error => {
+            console.error('Erreur:', error);
+            document.getElementById('history-conversations-list').innerHTML = 
+                '<div class="text-center py-3 text-danger">Erreur lors du chargement</div>';
+        });
+}
+
+function loadConversation(sessionId) {
+    window.location.href = `/chat?session_id=${sessionId}`;
+}
+
+function searchConversations() {
+    const query = document.getElementById('search-conversations').value;
+    if (query.trim()) {
+        fetch(`/api/conversations/search?q=${encodeURIComponent(query)}`)
+            .then(response => response.json())
+            .then(data => {
+                // Afficher les résultats de recherche
+                const container = document.getElementById('history-conversations-list');
+                if (data.results && data.results.length > 0) {
+                    container.innerHTML = data.results.map(result => `
+                        <div class="conversation-item" onclick="loadConversation('${result.session_id}')">
+                            <div class="conversation-header">
+                                <h4>${result.title || 'Conversation sans titre'}</h4>
+                            </div>
+                            <div class="conversation-details">
+                                <span><i class="fas fa-calendar"></i> ${new Date(result.created_at).toLocaleDateString('fr-FR')}</span>
+                                <span><i class="fas fa-search"></i> ${result.matches} correspondances</span>
+                            </div>
+                            ${result.search_matches ? `
+                                <div class="search-matches">
+                                    <h5>Extraits trouvés :</h5>
+                                    ${result.search_matches.map(match => `
+                                        <div class="match-item">${match.excerpt}</div>
+                                    `).join('')}
+                                </div>
+                            ` : ''}
+                        </div>
+                    `).join('');
+                } else {
+                    container.innerHTML = '<div class="text-center py-5 text-muted">Aucun résultat trouvé</div>';
+                }
+            });
+    } else {
+        loadConversationsList();
+    }
+}
+
+function editConversation(sessionId) {
+    const newTitle = prompt('Nouveau titre pour cette conversation :');
+    if (newTitle && newTitle.trim()) {
+        fetch(`/api/conversations/${sessionId}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ title: newTitle.trim() })
+        })
+        .then(() => loadConversationsList())
+        .catch(error => console.error('Erreur:', error));
+    }
+}
+
+function deleteConversation(sessionId) {
+    if (confirm('Êtes-vous sûr de vouloir supprimer cette conversation ?')) {
+        fetch(`/api/conversations/${sessionId}`, { method: 'DELETE' })
+            .then(() => loadConversationsList())
+            .catch(error => console.error('Erreur:', error));
+    }
+}
+</script>

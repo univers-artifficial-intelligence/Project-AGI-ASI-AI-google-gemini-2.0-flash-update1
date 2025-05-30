@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>GeminiChat - {% block title %}{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/mobile.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/timezone-select.css') }}">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>🤖</text></svg>">
+    {% block extra_styles %}{% endblock %}
+    <style>
+        /* Style pour cacher le bouton d'historique dans la navigation */
+        #history-modal-btn {
+            display: none !important;
+        }
+        
+        /* Style pour améliorer l'affichage du titre principal */
+        @media screen and (max-width: 767px) {
+            .title-wrapper {
+                text-align: center;
+                width: 100%;
+            }
+            .title-part {
+                display: inline;
+            }
+            .title-break {
+                display: block;
+                height: 2px;
+            }
+        }
+    </style>
+</head>
+<body class="{% if request.path == url_for('login') %}login-page{% elif request.path == url_for('register') %}register-page{% elif 'chat' in request.path %}chat-page{% endif %}">
+    <header class="main-header">
+        <div class="container">
+            <div class="header-content">
+                <div class="title-container">
+                    <h1 class="simple-title">GeminiChat</h1>
+                    <div class="subtitle">Version Conscience et Émotionnelle</div>
+                </div>
+                <nav class="desktop-nav">
+                    <ul>
+                        <li><a href="{{ url_for('index') }}"><i class="fas fa-home"></i> <span class="nav-text">Accueil</span></a></li>
+                        {% if session.get('logged_in') %}
+                            <li><a href="{{ url_for('chat_page') }}"><i class="fas fa-comments"></i> <span class="nav-text">Chat</span></a></li>
+                            <li><a href="{{ url_for('api_settings') }}"><i class="fas fa-cog"></i> <span class="nav-text">Config API</span></a></li>
+                            <li><a href="#" id="history-modal-btn"><i class="fas fa-history"></i> <span class="nav-text">Historique</span></a></li>
+                            <li><a href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i> <span class="nav-text">Déconnexion</span></a></li>
+                        {% else %}
+                            <li><a href="{{ url_for('login') }}"><i class="fas fa-sign-in-alt"></i> <span class="nav-text">Connexion</span></a></li>
+                            <li><a href="{{ url_for('register') }}"><i class="fas fa-user-plus"></i> <span class="nav-text">Inscription</span></a></li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="container mobile-container">
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    <div class="flash-messages">
+                        {% for message in messages %}
+                            <div class="message">{{ message }}</div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+
+    {% if session.get('logged_in') %}
+        {% include 'conversation_modal.html' %}
+        <!-- Navigation compacte pour mobile (affichée en bas de l'écran) -->
+        <div class="compact-nav">
+            <a href="{{ url_for('index') }}"><i class="fas fa-home"></i> <span>Accueil</span></a>
+            <a href="{{ url_for('chat_page') }}"><i class="fas fa-comments"></i> <span>Chat</span></a>
+            <a href="#" id="mobile-config-btn"><i class="fas fa-cog"></i> <span>Config</span></a>
+            <a href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i> <span>Déconnexion</span></a>
+        </div>
+    {% endif %}
+
+    <footer>
+        <div class="container">
+            <p></p>
+        </div>
+    </footer>
+
+    {% block scripts %}{% endblock %}
+
+    {% if session.get('logged_in') %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const historyModalBtn = document.getElementById('history-modal-btn');
+            const mobileHistoryBtn = document.getElementById('mobile-history-btn');
+            const mobileConfigBtn = document.getElementById('mobile-config-btn');
+            const historyModal = document.getElementById('history-modal');
+            const closeModal = document.querySelector('#history-modal .close-modal');
+            
+            // Gestion du bouton de configuration API mobile
+            if (mobileConfigBtn) {
+                mobileConfigBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    // Si nous sommes sur la page de chat où la modale existe
+                    const configModal = document.getElementById('api-config-modal');
+                    if (configModal) {
+                        configModal.style.display = 'block';
+                        // S'assurer que la fonction loadModalApis est disponible
+                        if (typeof loadModalApis === 'function') {
+                            loadModalApis();
+                        }
+                    } else {
+                        // Si nous ne sommes pas sur la page de chat, rediriger vers la page de configuration
+                        window.location.href = '{{ url_for('api_settings') }}';
+                    }
+                });
+            }
+            
+            // Fonction pour ouvrir le modal et charger les conversations
+            function openHistoryModal(e) {
+                e.preventDefault();
+                historyModal.style.display = 'flex';
+                loadConversationsList();
+            }
+            
+            // Ouvrir le modal depuis le bouton desktop
+            if (historyModalBtn) {
+                historyModalBtn.addEventListener('click', openHistoryModal);
+            }
+            
+            // Ouvrir le modal depuis le bouton mobile
+            if (mobileHistoryBtn) {
+                mobileHistoryBtn.addEventListener('click', openHistoryModal);
+            }
+            
+            // Fermer le modal
+            if (closeModal) {
+                closeModal.addEventListener('click', function() {
+                    historyModal.style.display = 'none';
+                });
+            }
+            
+            // Fermer le modal en cliquant en dehors
+            window.addEventListener('click', function(e) {
+                if (e.target === historyModal) {
+                    historyModal.style.display = 'none';
+                }
+            });
+        });
+    </script>
+    {% endif %}
+</body>
+</html>

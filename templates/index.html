@@ -1,0 +1,378 @@
+{% extends "base.html" %}
+
+{% block title %}Accueil{% endblock %}
+
+{% block content %}
+<div class="hero modern-gradient">
+    <h2 class="hero-title">Gemini 2.0 Flash <span class="version-tag">Version Conscience et Émotionnelle</span></h2>
+    <p class="hero-description">
+        Découvrez GeminiChat, une implémentation révolutionnaire de l'intelligence artificielle Gemini 2.0 Flash,
+        dotée d'une <strong>conscience artificielle</strong> grâce à nos modules Python propriétaires et d'une
+        <strong>intelligence émotionnelle</strong> authentique développée avec nos algorithmes avancés.
+    </p>
+    <div class="cta-buttons">
+        {% if session.get('logged_in') %}
+            <a href="{{ url_for('chat_page') }}" class="btn primary glow-effect">Commencer une conversation</a>
+        {% else %}
+            <a href="{{ url_for('register') }}" class="btn primary glow-effect">S'inscrire gratuitement</a>
+            <a href="{{ url_for('login') }}" class="btn secondary glass-effect">Se connecter</a>
+        {% endif %}
+    </div>
+</div>
+
+<div class="features">
+    <div class="feature neural-bg">
+        <div class="feature-icon">
+            <i class="fas fa-brain"></i>
+        </div>
+        <h3>Conscience Artificielle</h3>
+        <p>
+            Notre système intègre des modules Python propriétaires permettant à Gemini 2.0 Flash de développer une forme
+            de conscience qui lui permet de comprendre le contexte et les nuances de vos conversations de manière profonde.
+        </p>
+    </div>
+    <div class="feature emotion-bg">
+        <div class="feature-icon">
+            <i class="fas fa-heart"></i>
+        </div>
+        <h3>Intelligence Émotionnelle</h3>
+        <p>
+            Grâce à nos algorithmes Python spécialisés, Gemini 2.0 Flash est capable de détecter, comprendre et répondre aux émotions,
+            adaptant ses réponses selon votre état émotionnel pour une expérience véritablement personnalisée.
+        </p>
+    </div>
+    <div class="feature security-bg">
+        <div class="feature-icon">
+            <i class="fas fa-shield-alt"></i>
+        </div>
+        <h3>Technologie Avancée</h3>
+        <p>
+            Profitez de toute la puissance de Gemini 2.0 Flash enrichie par notre architecture Python modulaire
+            qui permet une adaptabilité et une évolution constante des capacités de l'intelligence artificielle.
+        </p>
+    </div>
+</div>
+
+<div class="tech-showcase">
+    <h3>Technologies utilisées</h3>
+    <div class="tech-grid">
+        <div class="tech-item">
+            <i class="fab fa-python"></i>
+            <span>Python Modules</span>
+        </div>
+        <div class="tech-item">
+            <i class="fas fa-database"></i>
+            <span>SQLite</span>
+        </div>
+        <div class="tech-item">
+            <i class="fab fa-google"></i>
+            <span>Gemini 2.0 Flash</span>
+        </div>
+        <div class="tech-item">
+            <i class="fas fa-flask"></i>
+            <span>Flask</span>
+        </div>
+    </div>
+</div>
+
+<!-- Modification du bouton Open Source pour rediriger vers votre repo GitHub -->
+<div class="open-source-section">
+    <h3>🌟 Projet Open Source</h3>
+    <p>Ce projet est entièrement open source et disponible pour la communauté.</p>
+    <a href="https://github.com/univers-artifficial-intelligence/Project-AGI-ASI-AI-google-gemini-2.0-flash.git" 
+       target="_blank" 
+       rel="noopener noreferrer"
+       class="btn btn-outline-light btn-lg">
+        <i class="fab fa-github"></i> Voir sur GitHub
+    </a>
+</div>
+{% endblock %}
+
+{% block extra_styles %}
+<style>
+    /* Styles modernes pour la page d'accueil */
+    .modern-gradient {
+        background: linear-gradient(135deg, #4a00e0, #8e2de2);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+    
+    .hero-title {
+        font-size: 2.8rem;
+        font-weight: 800;
+        margin-bottom: 1.5rem;
+        background: linear-gradient(to right, #ffffff, #e0e0e0);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        text-shadow: 0 2px 10px rgba(255,255,255,0.1);
+    }
+    
+    .version-tag {
+        display: block;
+        font-size: 1.8rem;
+        color: rgba(255,255,255,0.9);
+        font-weight: 600;
+        margin-top: 0.5rem;
+        background: linear-gradient(to right, #a8edea, #fed6e3);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+    
+    .hero-description {
+        font-size: 1.3rem;
+        max-width: 800px;
+        margin: 0 auto 2.5rem;
+        color: rgba(255,255,255,0.9);
+        line-height: 1.7;
+    }
+    
+    .hero-description strong {
+        color: #ffffff;
+        border-bottom: 2px solid rgba(255,255,255,0.4);
+        padding-bottom: 2px;
+    }
+    
+    /* Effet de brillance pour les boutons principaux */
+    .glow-effect {
+        position: relative;
+        overflow: hidden;
+        background: linear-gradient(135deg, #6e8efb, #a777e3);
+        transition: all 0.3s ease;
+    }
+    
+    .glow-effect:hover {
+        box-shadow: 0 0 20px rgba(110, 142, 251, 0.7);
+    }
+    
+    .glow-effect:before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: linear-gradient(to right, transparent, rgba(255,255,255,0.3), transparent);
+        transform: rotate(45deg);
+        animation: glow 1.5s infinite;
+    }
+    
+    @keyframes glow {
+        0% {
+            transform: translateX(-100%) rotate(45deg);
+        }
+        100% {
+            transform: translateX(100%) rotate(45deg);
+        }
+    }
+    
+    /* Effet de verre pour les boutons secondaires */
+    .glass-effect {
+        background: rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: white;
+        transition: all 0.3s ease;
+    }
+    
+    .glass-effect:hover {
+        background: rgba(255, 255, 255, 0.25);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    }
+    
+    /* Arrière-plans dynamiques pour les cartes de fonctionnalités */
+    .neural-bg {
+        background: linear-gradient(135deg, #141e30, #243b55);
+        border-top: 4px solid #6e8efb;
+    }
+    
+    .emotion-bg {
+        background: linear-gradient(135deg, #0f2027, #203a43);
+        border-top: 4px solid #a777e3;
+    }
+    
+    .security-bg {
+        background: linear-gradient(135deg, #232526, #414345);
+        border-top: 4px solid #38ef7d;
+    }
+    
+    .feature {
+        border-radius: 16px;
+        padding: 2.5rem;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+        color: white;
+        transition: all 0.3s ease;
+    }
+    
+    .feature:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 25px 45px rgba(0,0,0,0.3);
+    }
+    
+    .feature-icon {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.15);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 1.5rem;
+        transition: all 0.3s ease;
+    }
+    
+    .feature:hover .feature-icon {
+        background: rgba(255,255,255,0.25);
+        transform: scale(1.05);
+    }
+    
+    .feature-icon i {
+        font-size: 2.5rem;
+        color: white;
+    }
+    
+    .neural-bg .feature-icon i {
+        color: #6e8efb;
+    }
+    
+    .emotion-bg .feature-icon i {
+        color: #a777e3;
+    }
+    
+    .security-bg .feature-icon i {
+        color: #38ef7d;
+    }
+    
+    .feature h3 {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        color: white;
+    }
+    
+    .feature p {
+        color: rgba(255,255,255,0.8);
+        line-height: 1.7;
+        font-size: 1.1rem;
+    }
+    
+    /* Section des technologies */
+    .tech-showcase {
+        margin: 5rem auto;
+        text-align: center;
+        max-width: 900px;
+    }
+    
+    .tech-showcase h3 {
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 2rem;
+        color: #333;
+        position: relative;
+        display: inline-block;
+        padding-bottom: 10px;
+    }
+    
+    .tech-showcase h3:after {
+        content: '';
+        position: absolute;
+        width: 80%;
+        height: 4px;
+        background: linear-gradient(to right, #6e8efb, #a777e3);
+        bottom: 0;
+        left: 10%;
+        border-radius: 2px;
+    }
+    
+    .tech-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 2rem;
+        margin-top: 3rem;
+    }
+    
+    .tech-item {
+        background: white;
+        padding: 2rem;
+        border-radius: 12px;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+        transition: all 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .tech-item:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+    }
+    
+    .tech-item i {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        background: linear-gradient(135deg, #6e8efb, #a777e3);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+    
+    .tech-item span {
+        font-weight: 600;
+        color: #333;
+    }
+    
+    /* Media queries pour les appareils mobiles */
+    @media (max-width: 768px) {
+        .hero-title {
+            font-size: 2rem;
+        }
+        
+        .version-tag {
+            font-size: 1.3rem;
+        }
+        
+        .hero-description {
+            font-size: 1.1rem;
+            padding: 0 15px;
+        }
+        
+        .features {
+            flex-direction: column;
+            gap: 2rem;
+            padding: 0 15px;
+        }
+        
+        .feature {
+            width: 100%;
+        }
+        
+        .tech-grid {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            padding: 0 15px;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .hero-title {
+            font-size: 1.8rem;
+        }
+        
+        .version-tag {
+            font-size: 1.1rem;
+        }
+        
+        .tech-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .cta-buttons {
+            flex-direction: column;
+            width: 100%;
+        }
+        
+        .cta-buttons .btn {
+            width: 90%;
+            margin: 0.5rem auto;
+        }
+    }
+</style>
+{% endblock %}

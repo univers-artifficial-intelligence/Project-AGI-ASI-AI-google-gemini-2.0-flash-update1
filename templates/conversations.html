@@ -1,0 +1,429 @@
+{% extends 'base.html' %}
+
+{% block title %}Mes Conversations{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mt-4">
+        <div class="col-12">
+            <h1>Mes Conversations</h1>
+            <p class="text-muted">Retrouvez l'historique de vos conversations avec Gemini</p>
+            
+            <div class="search-bar mb-4">
+                <div class="input-group">
+                    <input type="text" id="search-input" class="form-control" placeholder="Rechercher dans vos conversations...">
+                    <div class="input-group-append">
+                        <button class="btn btn-primary" type="button" id="search-button">
+                            <i class="fas fa-search"></i> Rechercher
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="d-flex justify-content-between mb-4">
+                <button class="btn btn-primary" id="new-conversation-btn">
+                    <i class="fas fa-plus"></i> Nouvelle Conversation
+                </button>
+                
+                <div class="btn-group">
+                    <button class="btn btn-outline-secondary" id="refresh-btn">
+                        <i class="fas fa-sync-alt"></i> Actualiser
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-12">
+            <div id="conversations-list" class="list-group mb-4">
+                <!-- Les conversations seront chargées ici dynamiquement -->
+                <div class="text-center py-5" id="loading-indicator">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="sr-only">Chargement...</span>
+                    </div>
+                    <p class="mt-2">Chargement de vos conversations...</p>
+                </div>
+                
+                <div class="text-center py-5 d-none" id="no-conversations">
+                    <i class="fas fa-comments fa-3x text-muted mb-3"></i>
+                    <h5>Aucune conversation trouvée</h5>
+                    <p>Commencez à discuter avec Gemini pour créer votre première conversation.</p>
+                    <a href="{{ url_for('chat_page') }}" class="btn btn-primary mt-2">
+                        Nouvelle Conversation
+                    </a>
+                </div>
+                
+                <div class="text-center py-5 d-none" id="search-no-results">
+                    <i class="fas fa-search fa-3x text-muted mb-3"></i>
+                    <h5>Aucun résultat trouvé</h5>
+                    <p>Essayez avec d'autres mots-clés</p>
+                    <button class="btn btn-outline-secondary mt-2" id="clear-search-btn">
+                        Effacer la recherche
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal fade" id="delete-confirmation-modal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Confirmation de suppression</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Êtes-vous sûr de vouloir supprimer cette conversation ? Cette action est irréversible.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+                    <button type="button" class="btn btn-danger" id="confirm-delete-btn">Supprimer</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal fade" id="edit-title-modal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Modifier le titre</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <input type="text" class="form-control" id="new-title-input" placeholder="Nouveau titre">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+                    <button type="button" class="btn btn-primary" id="confirm-edit-btn">Enregistrer</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const conversationsList = document.getElementById('conversations-list');
+        const loadingIndicator = document.getElementById('loading-indicator');
+        const noConversations = document.getElementById('no-conversations');
+        const searchNoResults = document.getElementById('search-no-results');
+        const searchInput = document.getElementById('search-input');
+        const searchButton = document.getElementById('search-button');
+        const refreshButton = document.getElementById('refresh-btn');
+        const newConversationButton = document.getElementById('new-conversation-btn');
+        const clearSearchButton = document.getElementById('clear-search-btn');
+        
+        // Variables pour les modales
+        const deleteModal = $('#delete-confirmation-modal');
+        const editTitleModal = $('#edit-title-modal');
+        const confirmDeleteBtn = document.getElementById('confirm-delete-btn');
+        const confirmEditBtn = document.getElementById('confirm-edit-btn');
+        const newTitleInput = document.getElementById('new-title-input');
+        
+        let currentConversationId = null;
+        
+        // Charger les conversations au chargement de la page
+        loadConversations();
+        
+        // Événements
+        refreshButton.addEventListener('click', loadConversations);
+        searchButton.addEventListener('click', searchConversations);
+        searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchConversations();
+            }
+        });
+        clearSearchButton.addEventListener('click', loadConversations);
+        newConversationButton.addEventListener('click', createNewConversation);
+        
+        // Confirmer la suppression
+        confirmDeleteBtn.addEventListener('click', function() {
+            if (currentConversationId) {
+                deleteConversation(currentConversationId);
+            }
+        });
+        
+        // Confirmer l'édition du titre
+        confirmEditBtn.addEventListener('click', function() {
+            const newTitle = newTitleInput.value.trim();
+            if (newTitle && currentConversationId) {
+                updateConversationTitle(currentConversationId, newTitle);
+            }
+        });
+        
+        // Fonctions
+        function loadConversations() {
+            showLoading();
+            clearConversationsList();
+            
+            fetch('/api/conversations')
+                .then(response => {
+                    if (!response.ok) throw new Error('Failed to load conversations');
+                    return response.json();
+                })
+                .then(conversations => {
+                    hideLoading();
+                    
+                    if (conversations.length === 0) {
+                        showNoConversations();
+                    } else {
+                        renderConversations(conversations);
+                    }
+                })
+                .catch(error => {
+                    hideLoading();
+                    showNoConversations();
+                    console.error('Error loading conversations:', error);
+                    alert('Erreur lors du chargement des conversations.');
+                });
+        }
+        
+        function searchConversations() {
+            const query = searchInput.value.trim();
+            if (!query) return;
+            
+            showLoading();
+            clearConversationsList();
+            
+            fetch(`/api/conversations/search?query=${encodeURIComponent(query)}`)
+                .then(response => {
+                    if (!response.ok) throw new Error('Failed to search conversations');
+                    return response.json();
+                })
+                .then(conversations => {
+                    hideLoading();
+                    
+                    if (conversations.length === 0) {
+                        showSearchNoResults();
+                    } else {
+                        renderConversations(conversations, true);
+                    }
+                })
+                .catch(error => {
+                    hideLoading();
+                    showSearchNoResults();
+                    console.error('Error searching conversations:', error);
+                });
+        }
+        
+        function createNewConversation() {
+            fetch('/api/conversations/new', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({})
+            })
+            .then(response => {
+                if (!response.ok) throw new Error('Failed to create conversation');
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    // Rediriger vers la page de chat avec le nouvel ID de session
+                    window.location.href = `/chat?session_id=${data.session_id}`;  // Cette URL est relative, donc pas besoin de url_for
+                }
+            })
+            .catch(error => {
+                console.error('Error creating conversation:', error);
+                alert('Erreur lors de la création d\'une nouvelle conversation.');
+            });
+        }
+        
+        function updateConversationTitle(sessionId, newTitle) {
+            fetch(`/api/conversations/${sessionId}/title`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ title: newTitle })
+            })
+            .then(response => {
+                if (!response.ok) throw new Error('Failed to update title');
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    editTitleModal.modal('hide');
+                    loadConversations(); // Recharger pour afficher le nouveau titre
+                }
+            })
+            .catch(error => {
+                console.error('Error updating title:', error);
+                alert('Erreur lors de la mise à jour du titre.');
+            });
+        }
+        
+        function deleteConversation(sessionId) {
+            fetch(`/api/conversations/${sessionId}`, {
+                method: 'DELETE'
+            })
+            .then(response => {
+                if (!response.ok) throw new Error('Failed to delete conversation');
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    deleteModal.modal('hide');
+                    loadConversations(); // Recharger la liste sans la conversation supprimée
+                }
+            })
+            .catch(error => {
+                console.error('Error deleting conversation:', error);
+                alert('Erreur lors de la suppression de la conversation.');
+            });
+        }
+        
+        function renderConversations(conversations, isSearchResult = false) {
+            conversationsList.innerHTML = '';
+            
+            conversations.forEach(conversation => {
+                const conversationItem = document.createElement('div');
+                conversationItem.className = 'conversation-item';
+                
+                const header = document.createElement('div');
+                header.className = 'conversation-header';
+                
+                const title = document.createElement('h4');
+                title.textContent = conversation.title || `Conversation du ${formatDate(conversation.created_at)}`;
+                header.appendChild(title);
+                
+                const actions = document.createElement('div');
+                actions.className = 'conversation-actions';
+                
+                const editButton = document.createElement('button');
+                editButton.innerHTML = '<i class="fas fa-edit"></i>';
+                editButton.title = 'Modifier le titre';
+                editButton.className = 'action-btn edit-btn';
+                editButton.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    currentConversationId = conversation.session_id;
+                    newTitleInput.value = conversation.title || '';
+                    editTitleModal.modal('show');
+                });
+                actions.appendChild(editButton);
+                
+                const deleteButton = document.createElement('button');
+                deleteButton.innerHTML = '<i class="fas fa-trash-alt"></i>';
+                deleteButton.title = 'Supprimer la conversation';
+                deleteButton.className = 'action-btn delete-btn';
+                deleteButton.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    currentConversationId = conversation.session_id;
+                    deleteModal.modal('show');
+                });
+                actions.appendChild(deleteButton);
+                
+                header.appendChild(actions);
+                conversationItem.appendChild(header);
+                
+                const details = document.createElement('div');
+                details.className = 'conversation-details';
+                
+                const date = document.createElement('span');
+                date.className = 'conversation-date';
+                date.innerHTML = `<i class="far fa-calendar-alt"></i> ${formatDate(conversation.last_updated || conversation.created_at)}`;
+                details.appendChild(date);
+                
+                const messageCount = document.createElement('span');
+                messageCount.className = 'message-count';
+                messageCount.innerHTML = `<i class="far fa-comment-alt"></i> ${conversation.message_count || 0} message(s)`;
+                details.appendChild(messageCount);
+                
+                conversationItem.appendChild(details);
+                
+                if (conversation.last_message) {
+                    const preview = document.createElement('div');
+                    preview.className = 'conversation-preview';
+                    const messageType = conversation.last_message.message_type === 'user' ? 'Vous' : 'Gemini';
+                    let messageContent = conversation.last_message.content || '';
+                    if (messageContent.length > 80) {
+                        messageContent = messageContent.substring(0, 80) + '...';
+                    }
+                    preview.textContent = `${messageType}: ${messageContent}`;
+                    conversationItem.appendChild(preview);
+                }
+                
+                // Afficher des extraits pour les résultats de recherche
+                if (isSearchResult && conversation.matching_messages) {
+                    const matchesContainer = document.createElement('div');
+                    matchesContainer.className = 'search-matches';
+                    
+                    const matchTitle = document.createElement('h5');
+                    matchTitle.textContent = 'Messages correspondants:';
+                    matchesContainer.appendChild(matchTitle);
+                    
+                    conversation.matching_messages.forEach(msg => {
+                        const matchItem = document.createElement('div');
+                        matchItem.className = 'match-item';
+                        const msgType = msg.message_type === 'user' ? 'Vous' : 'Gemini';
+                        let msgContent = msg.content || '';
+                        if (msgContent.length > 100) {
+                            msgContent = msgContent.substring(0, 100) + '...';
+                        }
+                        matchItem.textContent = `${msgType}: ${msgContent}`;
+                        matchesContainer.appendChild(matchItem);
+                    });
+                    
+                    conversationItem.appendChild(matchesContainer);
+                }
+                
+                // Rendre l'élément de conversation cliquable
+                conversationItem.addEventListener('click', function() {
+                    window.location.href = `/chat?session_id=${conversation.session_id}`;
+                });
+                
+                conversationsList.appendChild(conversationItem);
+            });
+        }
+        
+        function formatDate(dateString) {
+            if (!dateString) return '';
+            const date = new Date(dateString);
+            return new Intl.DateTimeFormat('fr-FR', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            }).format(date);
+        }
+        
+        function showLoading() {
+            loadingIndicator.classList.remove('d-none');
+            noConversations.classList.add('d-none');
+            searchNoResults.classList.add('d-none');
+        }
+        
+        function hideLoading() {
+            loadingIndicator.classList.add('d-none');
+        }
+        
+        function showNoConversations() {
+            noConversations.classList.remove('d-none');
+            searchNoResults.classList.add('d-none');
+        }
+        
+        function showSearchNoResults() {
+            noConversations.classList.add('d-none');
+            searchNoResults.classList.remove('d-none');
+        }
+        
+        function clearConversationsList() {
+            while (conversationsList.firstChild !== loadingIndicator && 
+                   conversationsList.firstChild !== noConversations && 
+                   conversationsList.firstChild !== searchNoResults) {
+                conversationsList.removeChild(conversationsList.firstChild);
+            }
+        }
+    });
+</script>
+{% endblock %}

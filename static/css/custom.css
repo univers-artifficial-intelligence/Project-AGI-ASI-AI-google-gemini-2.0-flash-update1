@@ -1,0 +1,48 @@
+/* Styles pour la section AGI */
+.agi-features {
+    padding: 80px 0;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e4e7eb 100%);
+}
+
+.agi-features .section-title {
+    color: #2d5986;
+    margin-bottom: 25px;
+    font-weight: 700;
+}
+
+.agi-features h3 {
+    color: #1a3a5f;
+    margin-bottom: 20px;
+    font-weight: 600;
+}
+
+.agi-features p {
+    color: #445566;
+    margin-bottom: 20px;
+    line-height: 1.6;
+}
+
+.feature-list {
+    padding-left: 20px;
+    margin-bottom: 30px;
+}
+
+.feature-list li {
+    margin-bottom: 12px;
+    color: #445566;
+}
+
+.feature-list li strong {
+    color: #2d5986;
+}
+
+.card {
+    border: none;
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.05);
+    border-radius: 8px;
+}
+
+.card h4 {
+    color: #2d5986;
+    margin-bottom: 15px;
+}

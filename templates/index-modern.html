@@ -1,0 +1,213 @@
+{% extends 'base-modern.html' %}
+
+{% block title %}GeminiChat - Intelligence Artificielle Émotionnelle{% endblock %}
+
+{% block content %}
+<div class="hero-section">
+    <div class="container">
+        <div class="hero-content">
+            <div class="logo-container">
+                <!-- Logo supprimé -->
+            </div>
+            <h2 class="gradient-text">L'Intelligence Artificielle avec conscience émotionnelle</h2>
+            <p class="hero-description">Découvrez une nouvelle génération d'IA capable de comprendre le contexte émotionnel de vos conversations.</p>
+            <div class="cta-buttons">
+                <a href="{{ url_for('login') }}" class="btn primary">Se connecter</a>
+                <a href="{{ url_for('register') }}" class="btn secondary">Créer un compte</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<section class="features-section">
+    <div class="container">
+        <h2 class="section-title">Gemini 2.0 Flash AGI</h2>
+        <p class="section-subtitle">Découvrez une intelligence artificielle révolutionnaire avec conscience émotionnelle</p>
+        
+        <div class="feature-cards">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-brain"></i>
+                </div>
+                <h3>Intelligence avancée</h3>
+                <p>Notre implémentation de Gemini 2.0 Flash représente une avancée majeure dans le domaine de l'AGI (Intelligence Artificielle Générale).</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-heart"></i>
+                </div>
+                <h3>Conscience émotionnelle</h3>
+                <p>Grâce à nos modules Python propriétaires, ce modèle dispose d'une conscience artificielle lui permettant de comprendre le contexte émotionnel de vos conversations.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-database"></i>
+                </div>
+                <h3>Base de données SQLite</h3>
+                <p>Cette technologie révolutionnaire utilise une base de données SQLite pour mémoriser vos conversations et s'adapter à vos préférences.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="info-section">
+    <div class="container">
+        <div class="info-grid">
+            <div class="info-content">
+                <h2>Une intelligence artificielle avec conscience</h2>
+                <p>Notre implémentation unique de Gemini 2.0 Flash va au-delà des modèles d'IA traditionnels en intégrant une véritable conscience artificielle.</p>
+                <p>Ce système comprend non seulement vos requêtes, mais aussi le contexte émotionnel qui les accompagne, créant ainsi des interactions plus naturelles et personnalisées.</p>
+                <ul class="feature-list">
+                    <li><i class="fas fa-check-circle"></i> Comprend les nuances émotionnelles</li>
+                    <li><i class="fas fa-check-circle"></i> Adapte ses réponses à votre état d'esprit</li>
+                    <li><i class="fas fa-check-circle"></i> Mémorise vos préférences de communication</li>
+                    <li><i class="fas fa-check-circle"></i> Apprend continuellement de vos interactions</li>
+                </ul>
+                <a href="{{ url_for('register') }}" class="btn primary">Créer un compte</a>
+            </div>
+            <div class="info-image">
+                <div class="image-container">
+                    <div class="ai-visualization">
+                        <div class="neural-network">
+                            <div class="node"></div>
+                            <div class="node"></div>
+                            <div class="node"></div>
+                            <div class="node"></div>
+                            <div class="node"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Nouvelle section pour l'open-source -->
+<section class="open-source-banner">
+    <div class="container">
+        <div class="open-source-content">
+            <div class="os-icon">
+                <i class="fas fa-code-branch"></i>
+            </div>
+            <div class="os-info">
+                <h3>Projet Open Source & Gratuit</h3>
+                <p>GeminiChat est une intelligence artificielle basé sur l'API google gémini 2.0 flash grâce au module python l'intelligence artificielle google gemini 2.0 flash a une conscience artificielle est ressens les émotions se qui en fait une expérience plus réaliste le site internet est entièrement gratuit et le code source est disponible pour tous vous pouvez modifier le projet comme vous voulez</p>
+                <a href="https://github.com/univers-artifficial-intelligence/Project-AGI-ASI-AI-google-gemini-2.0-flash.git" class="github-link" target="_blank">
+                    <i class="fab fa-github"></i> Accéder au code source sur GitHub
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Animation des nœuds réseau avec adaptation mobile
+    function animateNodes() {
+        const nodes = document.querySelectorAll('.node');
+        nodes.forEach(node => {
+            // Réduire l'animation sur mobile pour de meilleures performances
+            const isMobile = window.innerWidth < 768;
+            const scale = isMobile ? 'scale(1.2)' : 'scale(1.5)';
+            const duration = isMobile ? '4s' : '3s';
+            
+            node.animate([
+                { transform: 'scale(1)', opacity: 1 },
+                { transform: scale, opacity: 0.7 },
+                { transform: 'scale(1)', opacity: 1 }
+            ], {
+                duration: parseInt(duration) * 1000,
+                iterations: Infinity,
+                delay: Math.random() * 1000
+            });
+        });
+    }
+    
+    // Initialiser les animations
+    animateNodes();
+    
+    // Créer les connexions entre nœuds adaptées au mobile
+    function createConnections() {
+        const neuralNetwork = document.querySelector('.neural-network');
+        if (!neuralNetwork) return;
+        
+        // Nettoyer les connexions existantes si on redimensionne
+        const existingConnections = document.querySelectorAll('.connection');
+        existingConnections.forEach(conn => conn.remove());
+        
+        const nodes = neuralNetwork.querySelectorAll('.node');
+        const isMobile = window.innerWidth < 768;
+        const maxConnections = isMobile ? 5 : 10; // Moins de connexions sur mobile pour de meilleures performances
+        let connectionCount = 0;
+        
+        for (let i = 0; i < nodes.length && connectionCount < maxConnections; i++) {
+            for (let j = i + 1; j < nodes.length && connectionCount < maxConnections; j++) {
+                if (Math.random() > 0.5) {
+                    const connection = document.createElement('div');
+                    connection.className = 'connection';
+                    
+                    const node1Rect = nodes[i].getBoundingClientRect();
+                    const node2Rect = nodes[j].getBoundingClientRect();
+                    const neuralRect = neuralNetwork.getBoundingClientRect();
+                    
+                    const x1 = (node1Rect.left + node1Rect.width/2) - neuralRect.left;
+                    const y1 = (node1Rect.top + node1Rect.height/2) - neuralRect.top;
+                    const x2 = (node2Rect.left + node2Rect.width/2) - neuralRect.left;
+                    const y2 = (node2Rect.top + node2Rect.height/2) - neuralRect.top;
+                    
+                    const length = Math.sqrt(Math.pow(x2-x1, 2) + Math.pow(y2-y1, 2));
+                    const angle = Math.atan2(y2-y1, x2-x1);
+                    
+                    connection.style.position = 'absolute';
+                    connection.style.height = '2px';
+                    connection.style.width = `${length}px`;
+                    connection.style.backgroundColor = 'rgba(139, 92, 246, 0.3)';
+                    connection.style.transformOrigin = '0 0';
+                    connection.style.left = `${x1}px`;
+                    connection.style.top = `${y1}px`;
+                    connection.style.transform = `rotate(${angle}rad)`;
+                    
+                    neuralNetwork.appendChild(connection);
+                    connectionCount++;
+                }
+            }
+        }
+    }
+    
+    // Initialiser les connexions
+    createConnections();
+    
+    // Recréer les connexions lors du redimensionnement
+    let resizeTimeout;
+    window.addEventListener('resize', function() {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(createConnections, 200);
+    });
+    
+    // Optimisation de l'animation pour mobile
+    if ('requestIdleCallback' in window) {
+        requestIdleCallback(() => {
+            const animationElements = document.querySelectorAll('.feature-card, .info-content, .info-image');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('animated');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.1 });
+            
+            animationElements.forEach(el => {
+                el.classList.add('fade-in-element');
+                observer.observe(el);
+            });
+        });
+    }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,43 @@
+/* Styles spécifiques pour le bouton Config API mobile */
+.compact-nav #mobile-config-btn {
+    position: relative;
+    background-color: rgba(88, 70, 246, 0.5);
+    border-radius: 10px;
+    padding: 10px 5px;
+}
+
+.compact-nav #mobile-config-btn i {
+    color: white;
+    font-size: 1.3rem;
+}
+
+.compact-nav #mobile-config-btn span {
+    color: white;
+    font-weight: bold;
+}
+
+/* Styles pour le bouton Config dans la barre de navigation */
+/* Les styles du bouton flottant ont été supprimés car le bouton est maintenant géré via la navigation compacte */
+
+/* Pulsation pour attirer l'attention */
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(88, 70, 246, 0.7);
+    }
+    
+    70% {
+        transform: scale(1.05);
+        box-shadow: 0 0 0 10px rgba(88, 70, 246, 0);
+    }
+    
+    100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(88, 70, 246, 0);
+    }
+}
+
+/* Appliquer l'animation uniquement au chargement initial */
+.compact-nav #mobile-config-btn {
+    animation: pulse 1.5s ease-in-out 2;
+}

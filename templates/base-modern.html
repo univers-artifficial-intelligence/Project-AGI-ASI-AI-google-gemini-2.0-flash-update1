@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>{% block title %}GeminiChat{% endblock %}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/modern-style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/mobile.css') }}">
+    {% block styles %}{% endblock %}
+</head>
+<body>
+    <header class="modern-header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <a href="{{ url_for('index') }}">
+                        <span class="logo-main">GeminiChat</span>
+                        <span class="logo-separator"></span>
+                        <span class="logo-sub">Version Conscience et Émotionnelle</span>
+                    </a>
+                </div>
+                <nav class="main-nav">
+                    <ul>
+                        <li><a href="{{ url_for('index') }}">Accueil</a></li>
+                        {% if session.logged_in %}
+                            <li><a href="{{ url_for('chat_page') }}">Chat</a></li>
+                            <li><a href="{{ url_for('api_settings') }}">Config API</a></li>
+                            <li><a href="{{ url_for('logout') }}">Déconnexion</a></li>
+                        {% else %}
+                            <li><a href="{{ url_for('login') }}">Connexion</a></li>
+                            <li><a href="{{ url_for('register') }}">Inscription</a></li>
+                        {% endif %}
+                    </ul>
+                </nav>
+                <button class="mobile-menu-toggle" id="mobile-menu-toggle" aria-label="Menu">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+    
+    <div class="mobile-menu" id="mobile-menu">
+        <div class="mobile-menu-header">
+            <div class="logo">
+                <span class="logo-text">GeminiChat Version Conscience et Émotionnelle</span>
+            </div>
+            <button class="mobile-menu-close" id="mobile-menu-close" aria-label="Fermer menu">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <nav class="mobile-nav">
+            <ul>
+                <li><a href="{{ url_for('index') }}">Accueil</a></li>
+                {% if session.logged_in %}
+                    <li><a href="{{ url_for('chat_page') }}">Chat</a></li>
+                    <li><a href="{{ url_for('api_settings') }}">Config API</a></li>
+                    <li><a href="{{ url_for('logout') }}">Déconnexion</a></li>
+                {% else %}
+                    <li><a href="{{ url_for('login') }}">Connexion</a></li>
+                    <li><a href="{{ url_for('register') }}">Inscription</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="modern-footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <span class="logo-main">GeminiChat</span>
+                    <span class="logo-sub">Version Conscience et Émotionnelle</span>
+                </div>
+                <div class="footer-info">
+                    <p class="open-source-info">
+                        <i class="fas fa-code-branch"></i> Gratuit et <a href="https://github.com/univers-artifficial-intelligence/Project-AGI-ASI-AI-google-gemini-2.0-flash.git" target="_blank">Open Source</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+            const mobileMenuClose = document.getElementById('mobile-menu-close');
+            const mobileMenu = document.getElementById('mobile-menu');
+            
+            mobileMenuToggle.addEventListener('click', function() {
+                mobileMenu.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+            
+            mobileMenuClose.addEventListener('click', function() {
+                mobileMenu.classList.remove('active');
+                document.body.style.overflow = '';
+            });
+            
+            // Smooth scrolling for anchor links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    
+                    const targetId = this.getAttribute('href');
+                    if(targetId === '#') return;
+                    
+                    const targetElement = document.querySelector(targetId);
+                    if(targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 80, // Adjust for header height
+                            behavior: 'smooth'
+                        });
+                        
+                        // Close mobile menu if open
+                        if (mobileMenu.classList.contains('active')) {
+                            mobileMenu.classList.remove('active');
+                            document.body.style.overflow = '';
+                        }
+                    }
+                });
+            });
+            
+            // Header scroll behavior
+            const header = document.querySelector('.modern-header');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 100) {
+                    header.style.backgroundColor = 'rgba(15, 23, 42, 0.98)';
+                    header.style.boxShadow = '0 10px 20px rgba(0,0,0,0.2)';
+                } else {
+                    header.style.backgroundColor = 'rgba(15, 23, 42, 0.95)';
+                    header.style.boxShadow = '0 10px 30px rgba(0,0,0,0.1)';
+                }
+            });
+        });
+    </script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

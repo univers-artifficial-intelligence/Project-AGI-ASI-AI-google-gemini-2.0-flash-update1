@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuration des API - GeminiChat</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/styles-modern.css">
+    <style>
+        .api-settings-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 1.5rem;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .api-card {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+            border-left: 4px solid #5846f6;
+        }
+        
+        .api-card.active {
+            box-shadow: 0 4px 12px rgba(88, 70, 246, 0.2);
+            border-left: 4px solid #18cc87;
+        }
+        
+        .api-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .api-name {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .api-status {
+            font-size: 0.875rem;
+            color: #5846f6;
+            padding: 0.25rem 0.75rem;
+            border-radius: 100px;
+            background-color: rgba(88, 70, 246, 0.1);
+        }
+        
+        .api-status.active {
+            color: #18cc87;
+            background-color: rgba(24, 204, 135, 0.1);
+        }
+        
+        .api-config-group {
+            margin-top: 1rem;
+        }
+        
+        .api-config-field {
+            margin-bottom: 1rem;
+        }
+        
+        .api-config-field label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #555;
+        }
+        
+        .api-config-field input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 0.9rem;
+        }
+        
+        .api-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        
+        .btn-api {
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+        }
+        
+        .btn-api-activate {
+            background-color: #5846f6;
+            color: white;
+        }
+        
+        .btn-api-activate:hover {
+            background-color: #4836d6;
+        }
+        
+        .btn-api-save {
+            background-color: #18cc87;
+            color: white;
+        }
+        
+        .btn-api-save:hover {
+            background-color: #15b87a;
+        }
+        
+        .alert {
+            padding: 1rem;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+        }
+        
+        .alert-success {
+            background-color: rgba(24, 204, 135, 0.1);
+            color: #15b87a;
+            border: 1px solid rgba(24, 204, 135, 0.3);
+        }
+        
+        .alert-error {
+            background-color: rgba(255, 71, 87, 0.1);
+            color: #ff4757;
+            border: 1px solid rgba(255, 71, 87, 0.3);
+        }
+        
+        .page-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <header class="header">
+            <div class="header-left">
+                <a href="/" class="logo">GeminiChat</a>
+            </div>
+            <nav class="header-nav">
+                <a href="/chat" class="nav-link">Chat</a>
+                <a href="/api-settings" class="nav-link active">Configuration des API</a>
+                <a href="/logout" class="nav-link">Déconnexion</a>
+            </nav>
+        </header>
+        
+        <main>
+            <div class="api-settings-container">
+                <div class="page-header">
+                    <h1>Configuration des API d'Intelligence Artificielle</h1>
+                    <p>Vous pouvez configurer ici les différentes API d'IA que vous souhaitez utiliser avec GeminiChat</p>
+                </div>
+                
+                <div id="status-message"></div>
+                
+                <div id="api-list" class="api-list">
+                    <!-- Les cartes d'API seront générées dynamiquement ici -->
+                    <div class="loading-placeholder">
+                        <p class="text-center">Chargement des API disponibles...</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Charger les API disponibles
+            loadAvailableApis();
+
+            // Fonction pour charger les API disponibles
+            function loadAvailableApis() {
+                fetch('/api/config/apis')
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Erreur de réseau');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        renderApiCards(data.available_apis, data.current_api);
+                    })
+                    .catch(error => {
+                        console.error('Erreur lors du chargement des API:', error);
+                        showStatusMessage('Erreur lors du chargement des API disponibles', 'error');
+                    });
+            }
+
+            // Fonction pour charger les clés API
+            function loadApiKeys() {
+                return fetch('/api/keys')
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Erreur de réseau');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        return data.api_keys || {};
+                    })
+                    .catch(error => {
+                        console.error('Erreur lors du chargement des clés API:', error);
+                        return {};
+                    });
+            }
+
+            // Fonction pour afficher les cartes d'API
+            async function renderApiCards(apis, currentApi) {
+                const apiList = document.getElementById('api-list');
+                apiList.innerHTML = '';
+                
+                // Charger les clés API
+                const apiKeys = await loadApiKeys();
+                
+                // Créer une carte pour chaque API
+                apis.forEach(apiName => {
+                    const isActive = apiName === currentApi;
+                    const apiKey = apiKeys[apiName] || '';
+                    
+                    const card = document.createElement('div');
+                    card.className = `api-card ${isActive ? 'active' : ''}`;
+                    card.dataset.api = apiName;
+                    
+                    card.innerHTML = `
+                        <div class="api-header">
+                            <span class="api-name">${apiName.charAt(0).toUpperCase() + apiName.slice(1)}</span>
+                            <span class="api-status ${isActive ? 'active' : ''}">${isActive ? 'Active' : 'Inactive'}</span>
+                        </div>
+                        <div class="api-description">
+                            ${getApiDescription(apiName)}
+                        </div>
+                        <div class="api-config-group">
+                            <div class="api-config-field">
+                                <label for="${apiName}-api-key">Clé API</label>
+                                <input 
+                                    type="password" 
+                                    id="${apiName}-api-key" 
+                                    name="${apiName}-api-key" 
+                                    value="${apiKey}"
+                                    placeholder="Entrez votre clé API ${apiName.charAt(0).toUpperCase() + apiName.slice(1)}"
+                                >
+                            </div>
+                        </div>
+                        <div class="api-actions">
+                            <button 
+                                class="btn-api btn-api-save" 
+                                data-action="save"
+                                data-api="${apiName}"
+                            >
+                                Enregistrer la clé
+                            </button>
+                            ${!isActive ? `
+                                <button 
+                                    class="btn-api btn-api-activate" 
+                                    data-action="activate"
+                                    data-api="${apiName}"
+                                >
+                                    Activer cette API
+                                </button>
+                            ` : ''}
+                        </div>
+                    `;
+                    
+                    apiList.appendChild(card);
+                });
+                
+                // Ajouter des écouteurs d'événements pour les boutons
+                document.querySelectorAll('.btn-api').forEach(button => {
+                    button.addEventListener('click', handleApiAction);
+                });
+            }
+
+            // Fonction pour obtenir la description d'une API
+            function getApiDescription(apiName) {
+                const descriptions = {
+                    'gemini': 'API Google Gemini 2.0 Flash - L\'API par défaut qui alimente GeminiChat.',
+                    'claude': 'API Claude d\'Anthropic - Une alternative puissante avec des capacités avancées de compréhension et de génération de texte.'
+                };
+                
+                return descriptions[apiName] || `API ${apiName}`;
+            }
+
+            // Fonction pour gérer les actions sur les API
+            function handleApiAction(event) {
+                const button = event.currentTarget;
+                const action = button.dataset.action;
+                const apiName = button.dataset.api;
+                
+                // Désactiver le bouton pendant l'action
+                button.disabled = true;
+                button.classList.add('loading');
+                
+                if (action === 'activate') {
+                    // Activer l'API
+                    activateApi(apiName)
+                        .then(success => {
+                            if (success) {
+                                loadAvailableApis(); // Recharger la liste des API
+                                showStatusMessage(`L'API ${apiName} a été activée avec succès`, 'success');
+                            }
+                        })
+                        .finally(() => {
+                            button.disabled = false;
+                            button.classList.remove('loading');
+                        });
+                } else if (action === 'save') {
+                    // Enregistrer la clé API
+                    const apiKeyInput = document.getElementById(`${apiName}-api-key`);
+                    const apiKey = apiKeyInput.value;
+                    
+                    saveApiKey(apiName, apiKey)
+                        .then(success => {
+                            if (success) {
+                                showStatusMessage(`La clé API pour ${apiName} a été enregistrée`, 'success');
+                            }
+                        })
+                        .finally(() => {
+                            button.disabled = false;
+                            button.classList.remove('loading');
+                        });
+                }
+            }
+
+            // Fonction pour activer une API
+            function activateApi(apiName) {
+                return fetch('/api/config/apis/current', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ api_name: apiName })
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Erreur de réseau');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.success) {
+                            return true;
+                        } else {
+                            showStatusMessage(data.error || 'Une erreur est survenue', 'error');
+                            return false;
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Erreur lors de l\'activation de l\'API:', error);
+                        showStatusMessage('Erreur lors de l\'activation de l\'API', 'error');
+                        return false;
+                    });
+            }
+
+            // Fonction pour enregistrer une clé API
+            function saveApiKey(apiName, apiKey) {
+                return fetch(`/api/keys/${apiName}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ api_key: apiKey })
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Erreur de réseau');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.success) {
+                            return true;
+                        } else {
+                            showStatusMessage(data.error || 'Une erreur est survenue', 'error');
+                            return false;
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Erreur lors de l\'enregistrement de la clé API:', error);
+                        showStatusMessage('Erreur lors de l\'enregistrement de la clé API', 'error');
+                        return false;
+                    });
+            }
+
+            // Fonction pour afficher un message de statut
+            function showStatusMessage(message, type = 'success') {
+                const statusElement = document.getElementById('status-message');
+                statusElement.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
+                
+                // Faire disparaître le message après 5 secondes
+                setTimeout(() => {
+                    statusElement.innerHTML = '';
+                }, 5000);
+            }
+        });
+    </script>
+</body>
+</html>

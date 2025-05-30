@@ -1,0 +1,270 @@
+{
+    "memory_retrieval_enhancer": {
+        "name": "memory_retrieval_enhancer",
+        "path": "modules\\memory_retrieval_enhancer.py",
+        "enabled": true,
+        "priority": 65,
+        "description": "Renforce les instructions de mémoire des conversations pour l'IA",
+        "version": "1.0.0",
+        "dependencies": ["conversation_memory_enhancer"],
+        "hooks": [
+            "process_request"
+        ],
+        "creation_time": 1748447200.0,
+        "last_modified": 1748447200.0,
+        "module_type": "standard"
+    },
+    "enhanced_reasoning": {
+        "name": "enhanced_reasoning",
+        "path": "modules\\enhanced_reasoning.py",
+        "enabled": true,
+        "priority": 50,
+        "description": "Am\u00e9liore les capacit\u00e9s de raisonnement structur\u00e9 et de d\u00e9duction logique de Gemini",
+        "version": "0.1.0",
+        "dependencies": [],
+        "hooks": [
+            "process_request",
+            "process_response"
+        ],
+        "creation_time": 1747931113.9589055,
+        "last_modified": 1747943518.0,
+        "module_type": "standard"
+    },
+    "conversation_context_manager": {
+        "name": "conversation_context_manager",
+        "path": "modules\\conversation_context_manager.py",
+        "enabled": true,
+        "priority": 70,
+        "description": "Équilibre les expressions émotionnelles et améliore la continuité des conversations",
+        "version": "1.0.0",
+        "dependencies": [],
+        "hooks": [
+            "process_request",
+            "process_response"
+        ],
+        "creation_time": 1747931113.9589055,
+        "last_modified": 1747943518.0,
+        "module_type": "standard"
+    },
+    "logic_improvement": {
+        "name": "logic_improvement",
+        "path": "modules\\logic_improvement.py",
+        "enabled": true,
+        "priority": 60,
+        "description": "Am\u00e9liore la coh\u00e9rence logique et la d\u00e9tection de contradictions dans les r\u00e9ponses de Gemini",
+        "version": "0.1.0",
+        "dependencies": [],
+        "hooks": [
+            "process_request",
+            "process_response"
+        ],
+        "creation_time": 1747931114.0094569,
+        "last_modified": 1747943518.0,
+        "module_type": "standard"
+    },
+    "analogical_reasoning": {
+        "name": "analogical_reasoning",
+        "path": "modules\\analogical_reasoning.py",
+        "enabled": true,
+        "priority": 100,
+        "description": "",
+        "version": "0.1",
+        "dependencies": [],
+        "hooks": [
+            "process_response",
+            "process_request"
+        ],
+        "creation_time": 1747931605.5331721,
+        "last_modified": 1747943518.0,
+        "module_type": "auto_generated"
+    },
+    "causal_reasoning_system": {
+        "name": "causal_reasoning_system",
+        "path": "modules\\causal_reasoning_system.py",
+        "enabled": true,
+        "priority": 100,
+        "description": "",
+        "version": "0.1",
+        "dependencies": [],
+        "hooks": [
+            "process_response",
+            "process_request"
+        ],
+        "creation_time": 1747931605.5499551,
+        "last_modified": 1747943518.0,
+        "module_type": "auto_generated"
+    },
+    "conscience_reflexive": {
+        "name": "conscience_reflexive",
+        "path": "modules\\conscience_reflexive.py",
+        "enabled": true,
+        "priority": 100,
+        "description": "Module de conscience réflexive pour simuler une conscience émotionnelle",
+        "version": "0.1",
+        "dependencies": [],
+        "hooks": [
+            "process_response",
+            "process_request"
+        ],
+        "creation_time": 1747931605.5574188,
+        "last_modified": 1747943518.0,
+        "module_type": "auto_generated"
+    },
+    "hierarchical_memory_system": {
+        "name": "hierarchical_memory_system",
+        "path": "modules\\hierarchical_memory_system.py",
+        "enabled": true,
+        "priority": 100,
+        "description": "",
+        "version": "0.1",
+        "dependencies": [],
+        "hooks": [
+            "process_response",
+            "process_request"
+        ],
+        "creation_time": 1747931605.5638003,
+        "last_modified": 1747943518.0,
+        "module_type": "auto_generated"
+    },
+    "metacognition": {
+        "name": "metacognition",
+        "path": "modules\\metacognition.py",
+        "enabled": true,
+        "priority": 100,
+        "description": "Module de métacognition permettant à l'IA de réfléchir sur ses propres processus",
+        "version": "0.1",
+        "dependencies": [],
+        "hooks": [
+            "process_response",
+            "process_request"
+        ],
+        "creation_time": 1747931605.5728202,
+        "last_modified": 1747943518.0,
+        "module_type": "auto_generated"
+    },
+    "module_template": {
+        "name": "module_template",
+        "path": "modules\\module_template.py",
+        "enabled": true,
+        "priority": 100,
+        "description": "Module template d'exemple",
+        "version": "0.1.0",
+        "dependencies": [],
+        "hooks": [
+            "process_request",
+            "process_response"
+        ],
+        "creation_time": 1747931605.6104548,
+        "last_modified": 1747943518.0,
+        "module_type": "standard"
+    },
+    "planification_ia_avancee": {
+        "name": "planification_ia_avancee",
+        "path": "modules\\planification_ia_avancee.py",
+        "enabled": true,
+        "priority": 100,
+        "description": "",
+        "version": "0.1",
+        "dependencies": [],
+        "hooks": [
+            "process_response",
+            "process_request"
+        ],
+        "creation_time": 1747931605.6249614,
+        "last_modified": 1747943518.0,
+        "module_type": "auto_generated"
+    },
+    "planification_ia_avancee_adapter": {
+        "name": "planification_ia_avancee_adapter",
+        "path": "modules\\planification_ia_avancee_adapter.py",
+        "enabled": false,
+        "priority": 100,
+        "description": "Error: No module named 'planification_ia_avancee'",
+        "version": "0.1",
+        "dependencies": [],
+        "hooks": [],
+        "creation_time": 1747949739.6306324,
+        "last_modified": 1747943518.0,
+        "module_type": "standard"
+    },
+    "logger_module": {
+        "name": "logger_module",
+        "path": "modules\\logger_module.py",
+        "enabled": true,
+        "priority": 10,
+        "description": "Module de journalisation des types de donn\u00e9es",
+        "version": "0.1.0",
+        "dependencies": [],
+        "hooks": [
+            "process_request",
+            "process_response"
+        ],
+        "creation_time": 1747951133.363557,
+        "last_modified": 1747953577.1009922,
+        "module_type": "standard"
+    },
+    "type_corrector": {
+        "name": "type_corrector",
+        "path": "modules\\type_corrector.py",
+        "enabled": true,
+        "priority": 1,
+        "description": "Module de sécurité qui protège contre les erreurs de type",
+        "version": "0.2.0",
+        "dependencies": [],
+        "hooks": [
+            "process_request",
+            "process_response"
+        ],
+        "creation_time": 1747951133.3840642,
+        "last_modified": 1747953577.1009922,
+        "module_type": "standard"
+    },
+    "conversation_memory_enhancer": {
+        "name": "conversation_memory_enhancer",
+        "path": "modules\\conversation_memory_enhancer.py",
+        "enabled": true,
+        "priority": 60,
+        "description": "Am\u00e9liore la m\u00e9moire des conversations de l'IA",
+        "version": "1.0.0",
+        "dependencies": [],
+        "hooks": [
+            "process_request",
+            "process_response"
+        ],
+        "creation_time": 1747955757.3008924,
+        "last_modified": 1747955967.8155148,
+        "module_type": "standard"
+    },
+    "text_formatter": {
+        "name": "text_formatter",
+        "path": "modules\\text_formatter.py",
+        "enabled": true,
+        "priority": 100,
+        "description": "Améliore la structure et la présentation des réponses textuelles",
+        "version": "0.1",
+        "dependencies": [],
+        "hooks": [
+            "process_response",
+            "process_request"
+        ],
+        "creation_time": 1747955757.3008924,
+        "last_modified": 1747955967.8155148,
+        "module_type": "standard"
+    },
+    "time_awareness_module": {
+        "name": "time_awareness_module",
+        "path": "modules\\time_awareness_module.py",
+        "enabled": true,
+        "priority": 40,
+        "description": "Module permettant à Gemini de connaître l'heure et la date actuelles",
+        "version": "1.0.0",
+        "dependencies": [],
+        "hooks": [
+            "process_request",
+            "process_response"
+        ],
+        "creation_time": 1747955757.3008924,
+        "last_modified": 1747955967.8155148,
+        "module_type": "standard"
+    }
+}

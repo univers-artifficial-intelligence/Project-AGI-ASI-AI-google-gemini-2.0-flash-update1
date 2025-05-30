@@ -1,0 +1,26 @@
+Flask==2.3.3
+Flask-Compress==1.14
+Werkzeug==2.3.7
+watchdog==3.0.0
+requests==2.31.0
+pyngrok==6.0.0
+flask-ngrok==0.0.25
+
+# Support pour les différentes API d'IA
+anthropic==0.6.0     # Client Python pour l'API Claude
+google-generativeai==0.3.1  # SDK Python pour Gemini API
+
+schedule==1.1.0
+pytz==2023.3
+PyPDF2==3.0.1
+python-docx==0.8.11  # Lors de l'installation: pip install python-docx, mais dans le code: import docx
+pandas==1.5.3        # Optionnel pour l'analyse Excel
+openpyxl==3.1.2      # Optionnel, nécessaire pour pandas avec Excel
+xlrd==2.0.1          # Optionnel pour les anciens formats Excel
+chardet==5.1.0
+
+# Dépendances pour le système OCR
+pytesseract==0.3.10  # Interface Python pour Tesseract OCR
+opencv-python==4.8.0.76  # Pour le traitement d'image
+Pillow==10.0.0  # Pour la manipulation d'images (PIL)
+numpy==1.24.3  # Pour les opérations mathématiques et la manipulation de tableaux

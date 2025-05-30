@@ -1,0 +1,13 @@
+{
+    "default_api": "gemini",
+    "apis": {
+        "gemini": {
+            "api_key": null,
+            "api_url": null
+        },
+        "claude": {
+            "api_key": null,
+            "api_url": null
+        }
+    }
+}
